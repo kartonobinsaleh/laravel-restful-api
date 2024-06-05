@@ -195,4 +195,30 @@ class UserTest extends TestCase
             ]
         ]);
     }
+
+    public function testLogoutSuccess()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->delete(uri: '/api/users/logout', headers: [
+            'Authorization' => 'tokentest'
+        ])->assertStatus(200)->assertJson([
+            "data" => true
+        ]);
+    }
+
+    public function testLogoutFailed()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->delete(uri: '/api/users/logout', headers: [
+            'Authorization' => 'salah'
+        ])->assertStatus(401)->assertJson([
+            "errors" => [
+                'message' => [
+                    "unauthorized"
+                ]
+            ]
+        ]);
+    }
 }
