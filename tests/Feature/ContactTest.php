@@ -106,4 +106,48 @@ class ContactTest extends TestCase
             ]
         ]);
     }
+
+
+    public function testUpdateSuccess()
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $contact = Contact::query()->limit(1)->first();
+
+        $this->put('/api/contacts/' . $contact->id, [
+            'first_name' => 'test update',
+            'last_name' => 'test update',
+            'email' => 'testupdate@gmail.com',
+            'phone' => '0866699',
+        ], [
+            'Authorization' => 'tokentest',
+        ])->assertStatus(200)->assertJson([
+            'data' => [
+                'first_name' => 'test update',
+                'last_name' => 'test update',
+                'email' => 'testupdate@gmail.com',
+                'phone' => '0866699',
+            ]
+        ]);
+    }
+
+    public function testUpdateValidationError()
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $contact = Contact::query()->limit(1)->first();
+
+        $this->put('/api/contacts/' . $contact->id, [
+            'first_name' => '',
+            'last_name' => 'test update',
+            'email' => 'testupdate@gmail.com',
+            'phone' => '0866699',
+        ], [
+            'Authorization' => 'tokentest',
+        ])->assertStatus(400)->assertJson([
+            'errors' => [
+                'first_name' => [
+                    'The first name field is required.'
+                ]
+            ]
+        ]);
+    }
 }
